@@ -1,26 +1,55 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import Notify from "notifyjs";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+class App extends React.Component{
+
+  constructor(props) {
+    super(props);
+
+    if (!Notify.needsPermission) {
+      this.doNotification();
+    } else if (Notify.isSupported()) {
+      Notify.requestPermission(()=>this.onPermissionGranted(), ()=>this.onPermissionDenied());
+    }
+
+  }
+
+  doNotification() {
+    var myNotification = new Notify("Important message from administrators:", {
+      body: "Hello there you are banned! 🤣",
+      notifyShow: () => console.log("notification was shown!")
+    });
+
+    myNotification.show();
+  }
+
+  onPermissionGranted() {
+	  console.log('Permission has been granted by the user');
+	  this.doNotification();
+  }
+
+  onPermissionDenied() {
+    console.warn('Permission has been denied by the user');
+  }
+
+
+  render() {
+    return (
+      <div className="App">
+          <p>Hello. u want sum fuk?</p>
+    
+        <div>
+          <button onClick={() => this.doNotification()}>
+            SEND ME A NOTIFICATION
+          </button>
+        </div>
+      </div>
+    );
+    }
+  }
+
+
 
 export default App;
